@@ -50,6 +50,11 @@ class Why3Verifier:
         if not clean_code.strip().lower().endswith("end"):
             clean_code = clean_code.rstrip() + "\nend"
             
+        # AUTO-HEAL: Ensure module names are legally capitalized
+        # E.g., translates "module max_function" to "module Max_function"
+        import re
+        clean_code = re.sub(r'(?i)^(module\s+)([a-z])(\w*)', lambda m: m.group(1) + m.group(2).upper() + m.group(3), clean_code, count=1, flags=re.MULTILINE)
+            
         return clean_code
 
     def verify(self, raw_code: str) -> Tuple[bool, str, str, str]:

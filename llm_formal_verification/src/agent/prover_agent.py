@@ -37,7 +37,8 @@ class AgenticProver:
             "### CRITICAL INSTRUCTIONS ###\n"
             "1. Output ONLY the code inside a ```why3 ... ``` block.\n"
             "2. Do NOT write any conversational text, greetings, or explanations.\n"
-            "3. ALWAYS include 'module', 'requires', 'ensures', and if using loops, 'invariant' and 'variant'."
+            "3. ALWAYS include 'module', 'requires', 'ensures', and if using loops, 'invariant' and 'variant'.\n"
+            "4. Module names MUST start with a Capital letter (e.g. `module MaxFunction`, not `module max`)."
         )
 
     def _write_trace_log(self, test_name: str, instruction: str, context: str, attempts: list):
