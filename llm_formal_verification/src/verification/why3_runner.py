@@ -14,11 +14,26 @@ class Why3Verifier:
 
     def __init__(self):
         self.why3_bin = shutil.which("why3") or WHY3_BINARY
-        self._check_installation()
+        self._ensure_installation()
 
-    def _check_installation(self):
-        if not os.path.exists(self.why3_bin):
-            logger.error(f"Why3 binary not found at {self.why3_bin}")
+    def _ensure_installation(self):
+        # Auto-install if missing (useful for Colab environments)
+        if not self.why3_bin or not os.path.exists(self.why3_bin):
+            logger.warning("Why3 binary not found. Attempting auto-installation (Debian/Ubuntu)...")
+            try:
+                subprocess.run(["apt-get", "update"], capture_output=True)
+                subprocess.run(["apt-get", "install", "-y", "why3", "alt-ergo"], capture_output=True)
+                self.why3_bin = shutil.which("why3") or "/usr/bin/why3"
+                logger.info(f"Auto-installation finished. Binary at: {self.why3_bin}")
+            except Exception as e:
+                logger.error(f"Auto-installation failed: {e}")
+        
+        # Always run config detect to ensure alt-ergo is registered
+        if self.why3_bin and os.path.exists(self.why3_bin):
+            logger.info("Running 'why3 config detect' to register solvers...")
+            subprocess.run([self.why3_bin, "config", "detect"], capture_output=True)
+        else:
+            logger.error("Why3 is still missing. Verification will fail.")
 
     def extract_code(self, raw_response: str) -> str:
         """Extracts the MLW code block from the raw LLM response."""
