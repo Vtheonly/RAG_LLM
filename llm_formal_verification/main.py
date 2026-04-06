@@ -27,17 +27,12 @@ def main():
     agent = AgenticProver(llm=llm, rag=rag, verifier=verifier)
     evaluator = Evaluator(agent=agent)
 
-    # 5. Define Test Suite (Expanded for deep analysis)
+    # 5. Define Test Suite (Focused strictly on Absolute Value as the Medium benchmark)
     test_cases = [
         {
             "level": 2,
-            "name": "Somme Iterative",
-            "prompt": "Écris une fonction `let sum_to_n (n: int) : int` utilisant une boucle while. Ajoute `requires { n >= 0 }` et `ensures { result >= 0 }`. Inclus un invariant et un variant de terminaison."
-        },
-        {
-            "level": 3,
-            "name": "Div Euclidienne",
-            "prompt": "Écris `let div_euclidienne (a b: int) : (int, int)` par soustractions successives. requires a >= 0 et b > 0. L'invariant doit contenir a = b * q + r. N'oublie pas le variant."
+            "name": "Absolute Value",
+            "prompt": "Écris une fonction `let abs (x: int) : int` qui retourne la valeur absolue de x. Ajoute ensures { result >= 0 } et ensures { result = x \/ result = -x }."
         }
     ]
 

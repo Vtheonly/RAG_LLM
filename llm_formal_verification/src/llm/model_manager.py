@@ -15,20 +15,23 @@ class LocalLLM:
         self.model = None
 
     def load_model(self):
-        """Downloads and loads the Gemma 4 model into memory with CPU optimizations."""
+        """Downloads and loads the Gemma model dynamically adapting to GPU/CPU capabilities."""
         logger.info(f"Downloading/Locating model: {MODEL_IDENTIFIER}")
         model_path = kagglehub.model_download(MODEL_IDENTIFIER)
 
-        logger.info(f"Loading model onto {self.device.upper()} (bfloat16 precision)...")
+        logger.info(f"Hardware Detected: {self.device.upper()}. Optimizing load strategy...")
         self.processor = AutoProcessor.from_pretrained(model_path)
         
-        # Using bfloat16 is crucial for keeping CPU memory footprint low
+        # If GPU is available, device_map="auto" will distribute weights across VRAM optimally.
+        # If CPU, it falls back to RAM. We use float16 for GPU and bfloat16 for modern CPUs.
+        dtype = torch.float16 if self.device == "cuda" else torch.bfloat16
+        
         self.model = AutoModelForCausalLM.from_pretrained(
             model_path,
-            dtype=torch.bfloat16,
+            torch_dtype=dtype,
             device_map="auto"
         )
-        logger.info("Model successfully loaded into memory.")
+        logger.info(f"Model successfully loaded into memory via {self.device.upper()} backend.")
 
     def generate(self, prompt: str, temperature: float, max_tokens: int) -> str:
         """Generates text using the loaded model."""

@@ -22,15 +22,16 @@ class Evaluator:
         for tc in test_cases:
             logger.info(f"\n>> TEST NIVEAU {tc['level']} : {tc['name']}")
 
-            logger.info("--- [1] BASELINE (Zero-shot) ---")
-            v, it, _ = self.agent.run(tc['name'], tc['prompt'], use_rag=False, use_loop=False)
-            results.append({"Niveau": tc['level'], "Test": tc['name'], "Méthode": "1. Baseline", "Succès": v, "Itérations": it})
+            # For extreme speed in this iteration, we only run the Full Agentic loop to debug errors.
+            # logger.info("--- [1] BASELINE (Zero-shot) ---")
+            # v, it, _ = self.agent.run(tc['name'], tc['prompt'], use_rag=False, use_loop=False)
+            # results.append({"Niveau": tc['level'], "Test": tc['name'], "Méthode": "1. Baseline", "Succès": v, "Itérations": it})
 
-            logger.info("--- [2] RAG (Contextual) ---")
-            v, it, _ = self.agent.run(tc['name'], tc['prompt'], use_rag=True, use_loop=False)
-            results.append({"Niveau": tc['level'], "Test": tc['name'], "Méthode": "2. RAG", "Succès": v, "Itérations": it})
+            # logger.info("--- [2] RAG (Contextual) ---")
+            # v, it, _ = self.agent.run(tc['name'], tc['prompt'], use_rag=True, use_loop=False)
+            # results.append({"Niveau": tc['level'], "Test": tc['name'], "Méthode": "2. RAG", "Succès": v, "Itérations": it})
 
-            logger.info("--- [3] RAG + AGENTIC LOOP ---")
+            logger.info("--- [3] FULL AGENTIC LOOP (Tracking up to 3 Retries) ---")
             v, it, final_code = self.agent.run(tc['name'], tc['prompt'], use_rag=True, use_loop=True)
             results.append({"Niveau": tc['level'], "Test": tc['name'], "Méthode": "3. Full Agent", "Succès": v, "Itérations": it})
             
