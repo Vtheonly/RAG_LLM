@@ -1,0 +1,111 @@
+% Run
+%  pdflatex article.tex
+% or
+%  make article.pdf
+% to compile this research report of internship subject.
+\documentclass[a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{a4wide}
+\usepackage{algorithm2e,wrapfig,subcaption,verbatim}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{color}
+
+% See more packages and a richer preamble in slides.tex
+
+%% Front Matter
+\title{\textit{Titre à changer}}
+%\titlerunning{TODO}
+
+% Author names are joined by \and.
+\author{\textit{Prénom1 Nom1} \and \textit{Prénom2 Nom2} \and \textit{etc}
+}
+
+%\authorrunning{} has to be set for the shorter version of the authors' names;
+%\authorrunning{TODO}
+
+\date{
+\textit{Groupe TD}\\
+\vspace{4mm}
+UMLP, Besan\c{c}on, France
+}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\begin{abstract}
+\textit{Ce document TODO}
+\end{abstract}
+
+\clearpage
+
+\section{Introduction}
+
+(\textit{Présenter la nature du document (notes de lecture ou sujet de projet M2), le contexte pédagogique, le sujet étudié et l'organisation du document (une partie pour l'étude bibliographique, une pour la description d'une formalisation, etc). Voir des exemples de sujets de projets dans les fichiers 1*.pdf et 2*.pdf fournis.})
+
+\section{Contexte / État de l'art}
+
+(\textit{Dans cette partie, expliquer les notions à connaître et les documents à consulter pour comprendre le sujet étudié.})
+
+\textit{Exemple de référence citée, à remplacer~\cite{GS12}.}
+
+\section{Réalisations/contributions}
+
+(\textit{Présenter le travail réalisé de manière claire et structurée. Le cas échéant, présenter dans cette partie le code Why3 et/ou Prolog produit, en expliquant son lien avec le sujet étudié. Présenter aussi les propriétés vérifiées, la méthode de vérification (BET, preuve, etc). Ensuite, donner les résultats de ces vérifications.})
+
+\section{Travaux à réaliser}
+
+(\textit{Si ce document est un sujet de projet et/ou stage de recherche de master 2, énumérer ici les principales tâches/étapes du travail à réaliser dans ce projet/stage. Voir des exemples dans les fichiers 1*.pdf et 2*.pdf fournis. Si ce document est une note de lecture, proposer ici des lectures complémentaires, des directions de recherche de niveau master 2, etc})
+
+\section{Conclusion}
+
+(\textit{Partie libre, courte, de synthèse et de perspectives.})
+
+\bibliographystyle{alpha}
+
+\renewcommand{\refname}{Références}
+
+\bibliography{biblio}
+
+\clearpage
+
+\appendix
+
+\section{Historique}
+
+Cette partie et la suivante ne font pas partie de l'article, mais servent à
+coordonner les actions de ses auteurs. Cette partie sert à archiver les tâches
+achevées.
+
+\subsection{12/2/26, AG, création}
+
+Version initiale fournie par Alain Giorgetti.
+
+\subsection{17/2/26, .., déclaration du groupe de travail sur Moodle}
+
+Fait par ..
+
+(copier ici le message diffusé, avec les noms des membres du groupe et la
+question de recherche choisie)
+
+\section{TODO}
+
+Dans cette partie, chaque sous-section est une tâche à commencer, à affecter ou
+en cours de réalisation. Chaque tâche est d'abord planifiée sur un intervalle de
+dates/heures, affectée, puis ces dates/heures sont ajustées au cours de sa
+réalisation. Quand une tâche est terminée, elle passe dans la partie précédente.
+
+\subsection{??/2/26, .., espace de rédaction collaborative}
+
+(exemple de tâche ni commencée ni affectée)
+
+Créer le projet plmlatex, Overleaf ou autre pour partager ce document, puis en
+informer tous les membres du groupe.
+
+\end{document}

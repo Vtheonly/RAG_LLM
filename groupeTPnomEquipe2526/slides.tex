@@ -1,0 +1,296 @@
+% Use
+%  pdflatex slides.tex
+% to compile this model of slides.
+% Use the following first line for animation..
+%\documentclass[9pt]{beamer}
+% .. or this one for printing
+\documentclass[9pt,handout]{beamer}
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{wasysym}
+\usepackage{multicol}
+\usepackage{xspace}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{pgf,tikz}
+\usepackage{hhline}
+\usepackage{colortbl}
+\usepackage{rotating}
+\usepackage{ragged2e}
+\usepackage[font=rmfamily,leftmargin=10pt,rightmargin=10pt]{quoting}
+
+\definecolor{violet}{rgb}{0.5,0,0.5}
+\definecolor{lemon}{rgb}{0.9,0.9,0.4}
+\definecolor{mygreen}{RGB}{27,156,16}
+\definecolor{myred}{RGB}{221,0,17}
+\definecolor{fushia}{rgb}{255,0,255}
+\definecolor{orangeb}{RGB}{204,85,0}
+
+\DeclareGraphicsExtensions{pdf,eps}
+
+% définition du style Why3
+% For listings:
+\definecolor{redcomm}{rgb}{0.8,0,0}
+\definecolor{byzantium}{rgb}{0.44,0.16,0.39}
+\lstdefinelanguage{Why3}
+{
+ literate=
+  {forall}{{$\forall\ $}}1
+  {exists}{{$\exists\ $}}1
+  {=>}{{$\Rightarrow$}}1
+  {==>}{{$\Longrightarrow$}}1
+  {>->}{{$\rightarrowtail$}}2
+  {<-}{{$\leftarrow\ $}}1
+  {<->}{{$\leftrightarrow\ $}}1
+  {->}{{$\to\ $}}1
+  {<=}{{$\leq\ $}}1
+  {>=}{{$\geq\ $}}1
+  {<>}{{$\neq\ $}}1
+  {\/\\}{{$\wedge\ $}}1
+  {|-}{{$\vdash$}}1
+  {\\\/}{{$\vee\ $}}1
+  {~}{{$\sim$}}1,
+ basicstyle=\scriptsize\ttfamily\bfseries,
+ sensitive=true,
+ morecomment=[l][\color{redcomm}]{//},
+ morecomment=[s][\color{redcomm}]{(*}{*)},
+ morestring=[b],
+ stringstyle=\color{black},
+ showstringspaces=false,
+ firstnumber=\thelstnumber,
+ numberstyle=\small,
+ numberblanklines=true,
+ showspaces=false,
+ showtabs=false,
+ xleftmargin=0pt,
+ xrightmargin=0pt,
+ emph=
+ {[1]
+  Record,Definition,Inductive,Parameter,Parameters,Axiom,Axioms,Fixpoint,Conjecture,Variable,
+  Variables,Hypothesis,Hypotheses,CoInductive,Theorem,Lemma,CoFixpoint,Let,Notation,Eval,Goal,
+  Qed,Defined
+  },
+ emphstyle={[1]\color{red}},
+ emph=
+ {[2]
+  bijective,relations.TotalStrictOrder,numof,module,while,do,begin,done,mutable,ghost,
+  set,type,prop,fix,with,cofix,forall,fun,let,if,then,else,match,end,return,as,for,to,in,
+  nat,list,int,array,compute,unfold,intro,intros,assert,omega,decompose,try,simpl,or,and,subst,true,false,
+  firstorder,nth,val,lemma,use,import,writes,function,axiom
+  },
+ emphstyle={[2]\color{blue}},
+ emph=
+ {[3]
+  predicate,invariant,variant,requires,ensures,writes
+  },
+ emphstyle={[3]\color{blue}}
+}
+
+
+\lstnewenvironment{codewhy3}{\lstset{language=Why3,numbers=none}}{\smallskip}
+
+\lstdefinestyle{why3}{language={Why3},%
+  numbers=none,
+  captionpos=b,
+  columns=flexible
+  basicstyle=\normalsize\ttfamily\bfseries
+}
+
+\lstdefinestyle{why3footnotesize}{language={Why3},%
+  numbers=none,
+  captionpos=b,
+  columns=flexible,
+  basicstyle=\footnotesize\ttfamily\bfseries
+}
+
+\lstdefinestyle{why3small}{language={Why3},%
+  numbers=none,
+  captionpos=b,
+  columns=flexible,
+   basicstyle=\small\ttfamily\bfseries
+}
+
+\lstdefinestyle{why3scriptsize}{language={Why3},%
+  numbers=none,
+  captionpos=b,
+  columns=flexible,
+   basicstyle=\scriptsize\ttfamily\bfseries
+}
+
+\lstdefinestyle{why3tiny}{language={Why3},%
+  numbers=none,
+  captionpos=b,
+  columns=flexible,
+   basicstyle=\tiny\ttfamily\bfseries
+}
+
+
+\newcommand{\why}[1]{\lstinline[style=why3small]{#1}}
+\newcommand{\whyf}[1]{\lstinline[style=why3footnotesize]{#1}}
+
+\bibliographystyle{alpha}
+\setbeamertemplate{bibliography item}[text]
+\renewcommand\newblock{\hskip .11em\@plus.33em\@minus.07em}
+
+\title[\textit{Changer le titre court ici}]{\textit{Changer le titre long ici}}
+
+\author[P. Nom]{\textit{Prénom1 Nom1 et Prénom2 Nom2 etc}\\
+\textit{Groupe TP}\\
+\vspace{4mm}
+UMLP, Besan\c{c}on,
+France}
+
+\date{\textit{\today}
+\begin{center}
+\textit{(Toutes les parties en italique, dont celle-ci, sont à remplacer par vos propres textes)}
+\end{center}
+}
+
+\begin{document}
+
+\maketitle
+
+% Plan de la présentation
+
+\setcounter{tocdepth}{1}     % Profondeur de la table des matieres
+
+\begin{frame}
+\frametitle{Plan}
+ \tableofcontents
+\end{frame}
+
+
+\section[Contexte]{Contexte (\textit{de 1 à 4 slides})}
+
+\begin{frame}
+\frametitle{\secname}
+
+\textit{Décrire ici le contexte scientifique du sujet choisi, avec l'apport des références principales}
+
+\bigskip
+
+
+\vspace{40pt}
+
+\begin{flushright}
+\textit{Prénom Nom de l'auteur-présentateur du slide, à mettre sur chaque slide}
+\end{flushright}
+\end{frame}
+
+
+\section{Existant/Définition/Vocabulaire (\textit{de 0 à 4 slides})}
+
+% Exemple de slide qui cite une référence
+\begin{frame}[fragile]
+\frametitle{\secname}
+\framesubtitle{\textit{exemple de sous titre, à remplacer} : Une permutation est une bijection}
+
+\textit{Selon le sujet, on peut avoir besoin d'un ou plusieurs slides comme celui-ci, introduisant des notions, définitions, notations, références, etc. Remplacer ce modèle selon les besoins de votre sujet, avec au moins une référence.}
+
+\justify \begin{quoting}[leftmargin=6pt,rightmargin=6pt] ``the signature used in
+\textsf{TOOB} (\textsf{T}heory \textsf{O}f \textsf{O}ne \textsf{B}ijection)
+consists of a single [\ldots] relation between two elements [that] indicates
+that the first one is sent to the second one by the permutation viewed as a
+bijection.''~\cite[partie 2.1]{ABF20}
+\end{quoting}
+
+\pause
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+Théorie d'une relation & Modèle $R^{f}$ associé à une bijection $f$ \\
+binaire bijective $R$  & $x~R^{f} y \Leftrightarrow f(x) = y$
+
+\\
+\hline
+\begin{lstlisting}[style=why3footnotesize]
+module TOOB
+  type t
+  predicate rel t t
+  clone export Bijectivity with
+    type t = t, type u = t,
+    predicate rel = rel, axiom .
+end
+\end{lstlisting}
+&
+\begin{tabular}{l}
+\noindent
+\begin{lstlisting}[style=why3footnotesize]
+type t
+val constant f : map t t
+axiom f_bij : bijective f
+predicate rel_f (x y: t) = (f[x] = y)
+clone TOOB with type t = t, 
+  predicate rel = rel_f
+\end{lstlisting}
+\end{tabular}
+\\
+\hline
+\end{tabular}
+\end{center}
+\pause
+
+
+\noindent\rule{\textwidth}{0.4pt}
+
+% Copier ci-dessous les blocs \bibitem générés dans le fichier .bbl par la
+% compilation de article.tex avec pdflatex
+\begin{scriptsize}
+\begin{thebibliography}{ABF20}
+
+\bibitem[ABF20]{ABF20}
+Michael Albert, Mathilde Bouvel, and Valentin Féray.
+%\newblock 
+Two first-order logics of permutations.
+%\newblock 
+{\em Journal of Combinatorial Theory, Series A}, 171:105158, April
+  2020.
+\newblock \url{https://arxiv.org/abs/1808.05459v2}.
+\end{thebibliography}
+\end{scriptsize}
+\end{frame}
+
+\section{Problématique (\textit{1 seul slide})}
+
+\begin{frame}
+\frametitle{\secname}
+
+\textit{Présenter ici vos questions de recherche}
+
+\end{frame}
+
+
+\section{\textit{Traitement du problème et programme de recherche} (\textit{de 1 à 4 slides})}
+
+\begin{frame}
+\frametitle{\secname}
+
+\textit{Présenter ici votre compréhension du problème, vos contributions, vos codes produits, vos formalisations éventuelles en Why3 et/ou Prolog, puis proposer un programme de recherche qui permettrait de prolonger cette étude lors des prochains semestres du master. Vous pouvez aussi suggérer des besoins de formation complémentaire, de lectures complémentaires à faire, de notions à acquérir, d'expérimentations à réaliser, de discussions à mener avec des chercheurs, etc}
+
+\end{frame}
+
+\section{Synthèse/Conclusion (\textit{1 seul slide})}
+
+\begin{frame}
+\frametitle{\secname}
+
+\textit{Comparer ici le travail accompli avec les questions de recherche initiales, afin de mesurer l'avancement du travail et d'évaluer la faisabilité/difficulté du reste.}
+
+\bigskip
+
+Conclusions personnelles
+
+\textit{Ensuite, par un item par membre de l'équipe, résumer le rôle, les apports et les difficultés de chacun}
+\begin{itemize}
+\item \textit{Prénom1 Nom1 : ..}
+\item \textit{Prénom2 Nom2 : ..}
+\item \textit{etc}
+\end{itemize}
+\end{frame}
+
+\end{document}

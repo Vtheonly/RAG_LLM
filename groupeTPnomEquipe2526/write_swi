@@ -1,0 +1,35 @@
+# Copyright 2017 Alain Giorgetti.
+#
+# This file is part of Validation-Lib.
+#
+# Validation-Lib is distributed under the terms of the GNU General Public License.
+#
+# Validation-Lib is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 of the License.
+#
+# Validation-Lib is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Validation-Lib.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Usage:
+#  PATH_TO_LIB/write_swi PATH_TO_PROGRAM/PROGRAM_NAME.pl PREDICATE_NAME SIZE OUTPUT_FILE
+# calling
+#  /usr/local/bin/swipl -q -t main -f PATH_TO_LIB/write_swi PATH_TO_LIB PATH_TO_PROGRAM/PROGRAM_NAME.pl PREDICATE_NAME SIZE OUTPUT_FILE
+# to restore the old behavior of write_swi broken in 2017:
+
+# WARNING: The usage 
+#   PATH_TO_LIB/write_swi PATH_TO_PROGRAM/PROGRAM_NAME.pl PREDICATE_NAME SIZE OUTPUT_FILE
+# of the former Prolog file write_swi does not work anymore in 2017.
+# Moreover the command name is no more in Argv. This bug is fixed by adding the 
+# file write_swi.pl and adapting the present file write_swi to restore the old behavior.
+
+
+
+echo "/usr/local/bin/swipl -q -t main -f $0 $(dirname $0) $1 $2 $3 $4"
+
+/usr/local/bin/swipl -q -t main -f $0 $(dirname $0) $1 $2 $3 $4

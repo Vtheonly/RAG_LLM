@@ -1,0 +1,145 @@
+(*************************************************************************)
+(* Copyright (C) 2024 Alain Giorgetti, Nicolas Pauchet and Dorine Tabary *)
+(* FEMTO-ST institute                                                    *)
+(*************************************************************************)
+
+(*************************************************************************)
+(*  This software is distributed under the terms of the GNU Lesser       *)
+(*  General Public License version 2.1                                   *)
+(*************************************************************************)
+
+module Decr
+
+  use export int.Int
+  use export list.List
+  use list.Length
+
+  let rec function decr (l : list int) (v : int) : list int
+    variant { length l }
+    ensures { length result = length l }
+  =
+    match l with
+    | Nil -> Nil
+    | Cons x m -> Cons (if x > v then (x-1) else x) (decr m v)
+    end
+
+  meta "rewrite_def" function decr
+
+end
+
+
+module Incr
+
+  use export int.Int
+  use export list.List
+  use list.Length
+
+  let rec function incr (l : list int) (v : int) : list int
+    variant { length l }
+    ensures { length result = length l }
+  =
+    match l with
+    | Nil -> Nil
+    | Cons x m -> Cons (if x >= v then (x+1) else x) (incr m v)
+    end
+
+  meta "rewrite_def" function incr
+
+end
+
+
+module DecrIncr
+
+  use Decr
+  use Incr
+  use list.Length
+
+  (* interactive proof: intros v; induction_ty_lex; Alt-Ergo *)
+  lemma decrIncr : forall v : int.
+    forall l : list int. decr (incr l v) v = l
+
+  (* The proof of the lemma can be automated by the attribute [@induction] *)
+  goal decrIncrAuto : forall v : int.
+    forall l [@induction] : list int. decr (incr l v) v = l
+
+end
+
+
+module IncrDecr
+
+  use Decr
+  use Incr
+  use list.Length
+  use list.Mem
+
+  (* TODO: find a counterexample for the following wrong goal. *)
+  goal incrDecrWrong : forall v : int.
+    forall l : list int. incr (decr l v) v = l
+
+  (* This error can be fixed by adding a condition, as in the following lemma. *)
+  (* interactive proof: intros v; induction_ty_lex; Alt-Ergo *)
+  lemma incrDecr : forall v : int.
+    forall l : list int. not (mem v l) -> incr (decr l v) v = l
+
+end
+
+
+module Code
+
+  use Decr
+  use list.Length
+
+  let rec function code (l : list int) : list int
+    variant { l.length }
+    ensures { length result = length l }
+  = match l with
+    | Cons x m -> Cons x (code (decr m x))
+    | Nil -> Nil
+    end
+
+  lemma codeCons : forall x m. code (Cons x m) = Cons x (code (decr m x))
+
+  lemma codeNil : code Nil = Nil
+
+end
+
+
+module Decode
+
+  use Incr
+  use Decr
+  use list.Length
+
+  let rec function decode (l : list int) : list int
+    variant { l.length }
+    ensures { length result = length l }
+  = match l with
+    | Cons x m -> Cons x (incr (decode m) x)
+    | Nil -> Nil
+    end
+
+  lemma decodeCons : forall x m. decode (Cons x m) = Cons x (incr (decode m) x)
+
+  lemma decodeNil : decode Nil = Nil
+
+  let testdecode12 () =
+    let l = Cons 2 ( Cons 2 (Cons 0 (Cons 1 (Cons 0 Nil)))) in
+    decode l
+
+end
+
+
+module DecodeCode
+
+  use Decr
+  use Incr
+  use DecrIncr
+  use IncrDecr
+  use list.Length
+  use list.Distinct
+  use Code
+  use Decode
+
+  lemma decodeCode : forall l : list int. distinct l -> decode (code l) = l
+
+end
