@@ -75,7 +75,21 @@ If the AI is "hallucinating" syntax, ensure your PDFs in `les_cours/` contain cl
 
 ---
 
+## 🔍 Grounding & Absolute Attribution (Thesis Validation)
+
+One of the core objectives of this research is to prove that the LLM is **grounded** in the expert course materials. The system enforces **Absolute Attribution** through three mechanisms:
+
+### 1. Mandatory Inline Citations
+The Agentic Loop enforces a strict rule: the LLM **MUST** include a Why3 comment at the top of its code citing the specific PDF and page number it used for its reasoning.
+> *Example output:* `(* Derived from: Cours05SPPpages145a166.pdf, Page 12 *)`
+
+### 2. Traceability Logs
+Inside the `logs/` directory, every `trace_*.md` file contains a **"RAG Context Retrieved"** section. You can manually compare this retrieved text with the LLM's output to verify semantic alignment.
+
+---
+
 ## 📈 Capabilities & Empirical Results
+
 
 Based on our Master 2 experiments using **Gemma-2B** with **Multilingual E5 RAG**, the following capabilities have been observed:
 

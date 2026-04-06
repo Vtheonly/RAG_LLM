@@ -39,7 +39,9 @@ class AgenticProver:
             "2. Do NOT write any conversational text, greetings, or explanations.\n"
             "3. ALWAYS include 'module', 'requires', 'ensures', and if using loops, 'invariant' and 'variant'.\n"
             "4. Module names MUST start with a Capital letter (e.g. `module MaxFunction`, not `module max`).\n"
-            "5. NEVER leave precondition brackets empty like `requires {}`. Use `requires { true }` instead."
+            "5. NEVER leave precondition brackets empty like `requires {}`. Use `requires { true }` instead.\n"
+            "6. MANDATORY ATTRIBUTION: You MUST include a comment at the top of your code citing the PDF source and page number from the provided context (e.g., `(* Derived from: Course01, Page 12 *)`).\n"
+            "7. GROUNDING: If you use a specific invariant or library from the context, mention it in a comment."
         )
 
     def _write_trace_log(self, test_name: str, instruction: str, context: str, attempts: list):
