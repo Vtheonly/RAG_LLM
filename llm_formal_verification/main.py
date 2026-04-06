@@ -32,7 +32,7 @@ def main():
         {
             "level": 2,
             "name": "Absolute Value",
-            "prompt": "Écris une fonction `let abs (x: int) : int` qui retourne la valeur absolue de x. Ajoute ensures { result >= 0 } et ensures { result = x \/ result = -x }."
+            "prompt": "Écris une fonction `let abs (x: int) : int` qui retourne la valeur absolue de x. Ajoute ensures { result >= 0 } et ensures { result = x \\/ result = -x }."
         }
     ]
 

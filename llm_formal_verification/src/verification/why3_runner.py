@@ -54,6 +54,9 @@ class Why3Verifier:
         # E.g., translates "module max_function" to "module Max_function"
         import re
         clean_code = re.sub(r'(?i)^(module\s+)([a-z])(\w*)', lambda m: m.group(1) + m.group(2).upper() + m.group(3), clean_code, count=1, flags=re.MULTILINE)
+        
+        # AUTO-HEAL: Fix empty requires/ensures brackets which crash Why3 syntax parser
+        clean_code = re.sub(r'requires\s*\{\s*\}', r'requires { true }', clean_code)
             
         return clean_code
 
