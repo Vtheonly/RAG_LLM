@@ -28,7 +28,7 @@ class LocalLLM:
         
         self.model = AutoModelForCausalLM.from_pretrained(
             model_path,
-            torch_dtype=dtype,
+            dtype=dtype,
             device_map="auto"
         )
         logger.info(f"Model successfully loaded into memory via {self.device.upper()} backend.")
