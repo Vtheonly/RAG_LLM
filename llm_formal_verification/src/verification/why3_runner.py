@@ -3,6 +3,7 @@ import re
 import shutil
 import subprocess
 import logging
+from pathlib import Path
 from typing import Tuple
 
 from src.config import WHY3_BINARY, SMT_PROVER, TEMP_WHY3_FILE, VERIFICATION_TIMEOUT
@@ -14,7 +15,7 @@ class Why3Verifier:
 
     def __init__(self):
         # Prefer the binary from config, then look in PATH
-        self.why3_bin = WHY3_BINARY if Path(WHY3_BINARY).is_file() else shutil.which("why3")
+        self.why3_bin = WHY3_BINARY if Path(str(WHY3_BINARY)).is_file() else shutil.which("why3")
         self._ensure_installation()
 
     def _ensure_installation(self):
