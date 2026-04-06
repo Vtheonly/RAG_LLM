@@ -27,21 +27,26 @@ def main():
     agent = AgenticProver(llm=llm, rag=rag, verifier=verifier)
     evaluator = Evaluator(agent=agent)
 
-    # 5. Define Test Suite (Derived from Master 2 requirements)
+    # 5. Define Test Suite (Expanded for deep analysis)
     test_cases = [
         {
             "level": 1,
-            "name": "Dummy (Maximum)",
+            "name": "Dummy Max",
             "prompt": "Écris une fonction `let max (x y: int) : int` qui retourne le plus grand entier. Ajoute `requires { true }` et un `ensures` correct."
         },
         {
+            "level": 1,
+            "name": "Absolute Value",
+            "prompt": "Écris une fonction `let abs (x: int) : int` qui retourne la valeur absolue de x. Ajoute ensures { result >= 0 } et ensures { result = x \\/ result = -x }."
+        },
+        {
             "level": 2,
-            "name": "Medium (Somme Itérative)",
+            "name": "Somme Iterative",
             "prompt": "Écris une fonction `let sum_to_n (n: int) : int` utilisant une boucle while. Ajoute `requires { n >= 0 }` et `ensures { result >= 0 }`. Inclus un invariant et un variant de terminaison."
         },
         {
             "level": 3,
-            "name": "Hardcore (Div Euclidienne)",
+            "name": "Div Euclidienne",
             "prompt": "Écris `let div_euclidienne (a b: int) : (int, int)` par soustractions successives. requires a >= 0 et b > 0. L'invariant doit contenir a = b * q + r. N'oublie pas le variant."
         }
     ]
@@ -56,6 +61,7 @@ def main():
 
     # 7. Visualize
     evaluator.plot_results(df_results)
+    print("\n✅ Run complete. Check the 'logs/' directory to inspect RAG contexts and LLM reasoning.")
 
 if __name__ == "__main__":
     main()

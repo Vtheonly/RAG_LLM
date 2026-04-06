@@ -23,15 +23,15 @@ class Evaluator:
             logger.info(f"\n>> TEST NIVEAU {tc['level']} : {tc['name']}")
 
             logger.info("--- [1] BASELINE (Zero-shot) ---")
-            v, it, _ = self.agent.run(tc['prompt'], use_rag=False, use_loop=False)
+            v, it, _ = self.agent.run(tc['name'], tc['prompt'], use_rag=False, use_loop=False)
             results.append({"Niveau": tc['level'], "Test": tc['name'], "Méthode": "1. Baseline", "Succès": v, "Itérations": it})
 
             logger.info("--- [2] RAG (Contextual) ---")
-            v, it, _ = self.agent.run(tc['prompt'], use_rag=True, use_loop=False)
+            v, it, _ = self.agent.run(tc['name'], tc['prompt'], use_rag=True, use_loop=False)
             results.append({"Niveau": tc['level'], "Test": tc['name'], "Méthode": "2. RAG", "Succès": v, "Itérations": it})
 
             logger.info("--- [3] RAG + AGENTIC LOOP ---")
-            v, it, final_code = self.agent.run(tc['prompt'], use_rag=True, use_loop=True)
+            v, it, final_code = self.agent.run(tc['name'], tc['prompt'], use_rag=True, use_loop=True)
             results.append({"Niveau": tc['level'], "Test": tc['name'], "Méthode": "3. Full Agent", "Succès": v, "Itérations": it})
             
             if v:
@@ -55,4 +55,4 @@ class Evaluator:
         
         plt.savefig(save_path)
         logger.info(f"Plot saved to {save_path}")
-        plt.show()
+        # plt.show() # Uncomment if running in Jupyter, kept commented for pure CLI script

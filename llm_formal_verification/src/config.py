@@ -10,27 +10,31 @@ import logging
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COURSES_DIR = os.path.join(BASE_DIR, "les_cours")
 TEMP_WHY3_FILE = os.path.join(BASE_DIR, "test_temp.mlw")
+LOGS_DIR = os.path.join(BASE_DIR, "logs")
+
+# Ensure logs directory exists
+os.makedirs(LOGS_DIR, exist_ok=True)
 
 # LLM Configuration
 MODEL_IDENTIFIER = "google/gemma-4/transformers/gemma-4-e2b-it"
-EMBEDDING_MODEL = "paraphrase-multilingual-MiniLM-L12-v2"
-MAX_NEW_TOKENS = 768
+# Switched to E5: Much better for French + Code context retrieval
+EMBEDDING_MODEL = "intfloat/multilingual-e5-small" 
+MAX_NEW_TOKENS = 1024
 TEMPERATURE_INITIAL = 0.1
-TEMPERATURE_RETRY = 0.2
+TEMPERATURE_RETRY = 0.3
 
-# RAG Configuration
-CHUNK_SIZE = 400
-CHUNK_OVERLAP = 50
-RETRIEVER_K = 2
+# RAG Configuration - CRITICAL FIX
+# 400 is too small for code. 1500 ensures whole functions are retrieved intact.
+CHUNK_SIZE = 1500 
+CHUNK_OVERLAP = 200
+RETRIEVER_K = 3
 
 # Verification Configuration
-# Search for why3 in PATH first, then common OPAM/system locations
 def _find_why3():
     """Locate the why3 binary across system and OPAM paths."""
     found = shutil.which("why3")
     if found:
         return found
-    # Common OPAM install paths (Colab, Linux)
     home = os.path.expanduser("~")
     candidates = [
         os.path.join(home, ".opam", "default", "bin", "why3"),
@@ -41,7 +45,7 @@ def _find_why3():
     for c in candidates:
         if os.path.isfile(c):
             return c
-    return "/usr/bin/why3"  # fallback
+    return "/usr/bin/why3"
 
 WHY3_BINARY = _find_why3()
 SMT_PROVER = "alt-ergo"

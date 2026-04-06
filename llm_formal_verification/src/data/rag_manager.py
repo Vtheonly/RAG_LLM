@@ -10,7 +10,6 @@ from src.config import CHUNK_SIZE, CHUNK_OVERLAP, EMBEDDING_MODEL, RETRIEVER_K
 
 logger = logging.getLogger("RAGManager")
 
-# SQLite fix for ChromaDB compatibility in certain local environments
 try:
     __import__("pysqlite3")
     sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
@@ -30,15 +29,22 @@ class RAGSystem:
             logger.warning("No documents provided to RAG system.")
             return
 
-        logger.info("Splitting documents into chunks...")
+        logger.info(f"Splitting documents into chunks of {CHUNK_SIZE} characters...")
+        # Using a more code-friendly split approach
         splitter = RecursiveCharacterTextSplitter(
             chunk_size=CHUNK_SIZE, 
-            chunk_overlap=CHUNK_OVERLAP
+            chunk_overlap=CHUNK_OVERLAP,
+            separators=["\nmodule", "\nlet", "\n\n", "\n", " ", ""]
         )
         splits = splitter.split_documents(documents)
 
         logger.info(f"Initializing HuggingFace Embeddings ({EMBEDDING_MODEL})...")
-        embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+        # Ensure we add the query instruction prefix required by e5 models
+        embeddings = HuggingFaceEmbeddings(
+            model_name=EMBEDDING_MODEL,
+            model_kwargs={'device': 'cpu'},
+            encode_kwargs={'normalize_embeddings': True}
+        )
 
         logger.info("Building Chroma Vector Store...")
         self.vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
@@ -51,9 +57,17 @@ class RAGSystem:
             return ""
         
         try:
-            retrieved_docs = self.retriever.invoke(query)
-            context = "\n...\n".join([d.page_content for d in retrieved_docs])
-            return context
+            # E5 models require 'query: ' prefix for optimal retrieval
+            e5_query = f"query: {query}"
+            retrieved_docs = self.retriever.invoke(e5_query)
+            
+            context_blocks = []
+            for i, d in enumerate(retrieved_docs):
+                source = d.metadata.get('source', 'Unknown Source')
+                page = d.metadata.get('page', 'Unknown Page')
+                context_blocks.append(f"--- SOURCE: {source} (Page {page}) ---\n{d.page_content}")
+                
+            return "\n\n".join(context_blocks)
         except Exception as e:
             logger.error(f"Retrieval failed: {e}")
             return ""
