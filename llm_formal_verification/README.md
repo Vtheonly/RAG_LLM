@@ -20,6 +20,11 @@ Developed for a Master 2 Research project, this system evaluates how a 2-billion
 2.  Run: `bash setup_linux.sh`
 3.  Launch: `source venv/bin/activate && python3 main.py`
 
+### ☁️ For Google Colab Users
+1.  **Open** the [colab_test_runner.ipynb](file:///home/mersel/Documents/Projects/RAG_LLM/llm_formal_verification/colab_test_runner.ipynb) in Google Colab.
+2.  **Enable GPU**: Go to `Runtime` -> `Change runtime type` -> `T4 GPU`.
+3.  **Run All Cells**: The notebook will automatically clone the repo, install Why3/Alt-Ergo, and execute the reasoning agent.
+
 ---
 
 ## 🏛 Architecture & Philosophy
