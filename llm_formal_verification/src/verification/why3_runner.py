@@ -13,27 +13,48 @@ class Why3Verifier:
     """Handles parsing LLM output and running it through the Why3 formal verifier."""
 
     def __init__(self):
-        self.why3_bin = shutil.which("why3") or WHY3_BINARY
+        # Prefer the binary from config, then look in PATH
+        self.why3_bin = WHY3_BINARY if Path(WHY3_BINARY).is_file() else shutil.which("why3")
         self._ensure_installation()
 
     def _ensure_installation(self):
-        # Auto-install if missing (useful for Colab environments)
-        if not self.why3_bin or not os.path.exists(self.why3_bin):
-            logger.warning("Why3 binary not found. Attempting auto-installation (Debian/Ubuntu)...")
+        """Checks for Why3 and attempts auto-installation or provides platform-specific warnings."""
+        if self.why3_bin and Path(self.why3_bin).is_file():
+            logger.info(f"Found Why3 binary at: {self.why3_bin}")
+            # Ensure solvers are registered
             try:
-                subprocess.run(["apt-get", "update"], capture_output=True)
-                subprocess.run(["apt-get", "install", "-y", "why3", "alt-ergo"], capture_output=True)
-                self.why3_bin = shutil.which("why3") or "/usr/bin/why3"
-                logger.info(f"Auto-installation finished. Binary at: {self.why3_bin}")
-            except Exception as e:
-                logger.error(f"Auto-installation failed: {e}")
+                subprocess.run([str(self.why3_bin), "config", "detect"], capture_output=True, check=False)
+            except Exception:
+                pass
+            return
+
+        # Not found - handle by platform
+        import platform
+        sys_info = platform.system().lower()
         
-        # Always run config detect to ensure alt-ergo is registered
-        if self.why3_bin and os.path.exists(self.why3_bin):
-            logger.info("Running 'why3 config detect' to register solvers...")
-            subprocess.run([self.why3_bin, "config", "detect"], capture_output=True)
-        else:
-            logger.error("Why3 is still missing. Verification will fail.")
+        if "linux" in sys_info:
+            logger.warning("Why3 not found. Attempting apt-get install (Ubuntu/Debian)...")
+            try:
+                subprocess.run(["sudo", "apt-get", "update"], capture_output=True)
+                subprocess.run(["sudo", "apt-get", "install", "-y", "why3", "alt-ergo"], capture_output=True)
+                self.why3_bin = shutil.which("why3") or "/usr/bin/why3"
+            except Exception as e:
+                logger.error(f"Linux auto-install failed: {e}")
+        
+        elif "windows" in sys_info:
+            logger.error("\n" + "="*60 +
+                         "\n[SYSTEM ERROR] Why3 is not installed on this Windows machine." +
+                         "\nFormal verification requires 'why3' and 'alt-ergo'." +
+                         "\n" +
+                         "\nRECOMMENDED FIX FOR WINDOWS:" +
+                         "\n1. Install WSL2 (Windows Subsystem for Linux)." +
+                         "\n2. Run: 'sudo apt install why3 alt-ergo' inside WSL." +
+                         "\n3. Run this Python script inside your WSL terminal." +
+                         "\n" + "="*60)
+        
+        if not self.why3_bin or not Path(self.why3_bin).is_file():
+            logger.error("Why3 verification will be disabled until the binary is found.")
+
 
     def extract_code(self, raw_response: str) -> str:
         """Extracts the MLW code block from the raw LLM response."""

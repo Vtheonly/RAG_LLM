@@ -1,4 +1,4 @@
-import glob
+from pathlib import Path
 import re
 import logging
 from typing import List
@@ -12,7 +12,7 @@ logger = logging.getLogger("DocumentLoader")
 class CourseLoader:
     """Handles the ingestion and sanitization of expert course PDFs."""
 
-    def __init__(self, directory_path: str = COURSES_DIR):
+    def __init__(self, directory_path: Path = COURSES_DIR):
         self.directory_path = directory_path
 
     def _clean_text(self, text: str) -> str:
@@ -30,7 +30,9 @@ class CourseLoader:
     def load_and_clean(self) -> List[Document]:
         """Loads all PDFs in the directory, cleans text, and returns Document objects."""
         docs = []
-        course_files = glob.glob(f"{self.directory_path}/*.pdf")
+        
+        # Using pathlib's glob for robust cross-platform path handling
+        course_files = list(self.directory_path.glob("*.pdf"))
 
         if not course_files:
             logger.warning(f"No PDFs found in '{self.directory_path}'. RAG will be empty.")
@@ -39,7 +41,9 @@ class CourseLoader:
         for file_path in course_files:
             logger.info(f"Loading document: {file_path}")
             try:
-                loader = PyMuPDFLoader(file_path)
+                # pyMuPDFLoader accepts string paths
+                loader = PyMuPDFLoader(str(file_path))
+
                 for doc in loader.load():
                     doc.page_content = self._clean_text(doc.page_content)
                     docs.append(doc)

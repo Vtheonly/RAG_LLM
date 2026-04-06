@@ -1,51 +1,57 @@
 import os
 import shutil
 import logging
+from pathlib import Path
 
 # ==========================================
 # SYSTEM CONFIGURATION
 # ==========================================
 
-# Paths
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-COURSES_DIR = os.path.join(BASE_DIR, "les_cours")
-TEMP_WHY3_FILE = os.path.join(BASE_DIR, "test_temp.mlw")
-LOGS_DIR = os.path.join(BASE_DIR, "logs")
+# Base directory (absolute path to the root of the project)
+BASE_DIR = Path(__file__).resolve().parent.parent
+COURSES_DIR = BASE_DIR / "les_cours"
+TEMP_WHY3_FILE = BASE_DIR / "test_temp.mlw"
+LOGS_DIR = BASE_DIR / "logs"
 
-# Ensure logs directory exists
-os.makedirs(LOGS_DIR, exist_ok=True)
+# Ensure crucial directories exist
+COURSES_DIR.mkdir(exist_ok=True)
+LOGS_DIR.mkdir(exist_ok=True)
 
 # LLM Configuration
 MODEL_IDENTIFIER = "google/gemma-4/transformers/gemma-4-e2b-it"
-# Switched to E5: Much better for French + Code context retrieval
 EMBEDDING_MODEL = "intfloat/multilingual-e5-small" 
 MAX_NEW_TOKENS = 1024
 TEMPERATURE_INITIAL = 0.1
 TEMPERATURE_RETRY = 0.3
 
-# RAG Configuration - CRITICAL FIX
-# 400 is too small for code. 1500 ensures whole functions are retrieved intact.
+# RAG Configuration
 CHUNK_SIZE = 1500 
 CHUNK_OVERLAP = 200
 RETRIEVER_K = 3
 
 # Verification Configuration
 def _find_why3():
-    """Locate the why3 binary across system and OPAM paths."""
+    """Locate the why3 binary across system, OPAM, and Windows paths."""
+    # 1. Search in system PATH
     found = shutil.which("why3")
     if found:
         return found
-    home = os.path.expanduser("~")
+    
+    # 2. Search in common OPAM/Linux paths
+    home = Path.home()
     candidates = [
-        os.path.join(home, ".opam", "default", "bin", "why3"),
-        os.path.join(home, ".opam", "4.14.2", "bin", "why3"),
-        "/usr/local/bin/why3",
-        "/usr/bin/why3",
+        home / ".opam" / "default" / "bin" / "why3",
+        home / ".opam" / "4.14.2" / "bin" / "why3",
+        Path("/usr/local/bin/why3"),
+        Path("/usr/bin/why3"),
     ]
+    
     for c in candidates:
-        if os.path.isfile(c):
-            return c
-    return "/usr/bin/why3"
+        if c.is_file():
+            return str(c)
+            
+    # 3. Fallback for Windows users (placeholder if they have it in local bin)
+    return "why3"  # Default attempt
 
 WHY3_BINARY = _find_why3()
 SMT_PROVER = "alt-ergo"
@@ -59,3 +65,4 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 logger = logging.getLogger("SystemConfig")
+

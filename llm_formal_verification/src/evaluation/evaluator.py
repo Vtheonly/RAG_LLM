@@ -5,7 +5,7 @@ import logging
 from typing import List, Dict
 
 from src.agent.prover_agent import AgenticProver
-from src.config import MODEL_IDENTIFIER
+from src.config import MODEL_IDENTIFIER, BASE_DIR
 
 logger = logging.getLogger("Evaluator")
 
@@ -35,13 +35,17 @@ class Evaluator:
             results.append({"Niveau": tc['level'], "Test": tc['name'], "Méthode": "3. Full Agent", "Succès": v, "Itérations": it})
             
             if v:
-                logger.info(f"Valid Code Generated:\n{final_code}")
+                # logger.info(f"Valid Code Generated:\n{final_code}")
+                pass
 
         return pd.DataFrame(results)
 
     def plot_results(self, df: pd.DataFrame, save_path: str = "evaluation_chart.png"):
         """Generates the comparison chart based on the Master 2 specification."""
         df["Succès (%)"] = df["Succès"].astype(int) * 100
+        
+        # Ensure save path is in the base directory
+        final_path = BASE_DIR / save_path
 
         plt.figure(figsize=(10, 6))
         sns.barplot(data=df, x="Niveau", y="Succès (%)", hue="Méthode", palette="viridis")
@@ -53,6 +57,6 @@ class Evaluator:
         plt.legend(title="Méthode")
         plt.tight_layout()
         
-        plt.savefig(save_path)
-        logger.info(f"Plot saved to {save_path}")
+        plt.savefig(str(final_path))
+        logger.info(f"Plot saved to {final_path}")
         # plt.show() # Uncomment if running in Jupyter, kept commented for pure CLI script

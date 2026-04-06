@@ -45,7 +45,7 @@ class AgenticProver:
     def _write_trace_log(self, test_name: str, instruction: str, context: str, attempts: list):
         """Saves a Markdown log file so the researcher can inspect RAG and LLM decisions."""
         safe_name = test_name.replace(" ", "_").replace("/", "_").lower()
-        filepath = os.path.join(LOGS_DIR, f"trace_{safe_name}_{int(time.time())}.md")
+        filepath = LOGS_DIR / f"trace_{safe_name}_{int(time.time())}.md"
         
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(f"# Trace Log: {test_name}\n\n")
