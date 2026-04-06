@@ -30,16 +30,6 @@ def main():
     # 5. Define Test Suite (Expanded for deep analysis)
     test_cases = [
         {
-            "level": 1,
-            "name": "Dummy Max",
-            "prompt": "Écris une fonction `let max (x y: int) : int` qui retourne le plus grand entier. Ajoute `requires { true }` et un `ensures` correct."
-        },
-        {
-            "level": 1,
-            "name": "Absolute Value",
-            "prompt": "Écris une fonction `let abs (x: int) : int` qui retourne la valeur absolue de x. Ajoute ensures { result >= 0 } et ensures { result = x \\/ result = -x }."
-        },
-        {
             "level": 2,
             "name": "Somme Iterative",
             "prompt": "Écris une fonction `let sum_to_n (n: int) : int` utilisant une boucle while. Ajoute `requires { n >= 0 }` et `ensures { result >= 0 }`. Inclus un invariant et un variant de terminaison."
