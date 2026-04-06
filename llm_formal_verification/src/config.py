@@ -1,4 +1,5 @@
 import os
+import shutil
 import logging
 
 # ==========================================
@@ -23,7 +24,26 @@ CHUNK_OVERLAP = 50
 RETRIEVER_K = 2
 
 # Verification Configuration
-WHY3_BINARY = "/usr/bin/why3"
+# Search for why3 in PATH first, then common OPAM/system locations
+def _find_why3():
+    """Locate the why3 binary across system and OPAM paths."""
+    found = shutil.which("why3")
+    if found:
+        return found
+    # Common OPAM install paths (Colab, Linux)
+    home = os.path.expanduser("~")
+    candidates = [
+        os.path.join(home, ".opam", "default", "bin", "why3"),
+        os.path.join(home, ".opam", "4.14.2", "bin", "why3"),
+        "/usr/local/bin/why3",
+        "/usr/bin/why3",
+    ]
+    for c in candidates:
+        if os.path.isfile(c):
+            return c
+    return "/usr/bin/why3"  # fallback
+
+WHY3_BINARY = _find_why3()
 SMT_PROVER = "alt-ergo"
 VERIFICATION_TIMEOUT = 30
 MAX_AGENT_RETRIES = 3
