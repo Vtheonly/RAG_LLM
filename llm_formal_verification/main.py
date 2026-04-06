@@ -1,17 +1,22 @@
 import logging
-from src.data.document_loader import CourseLoader
+from src.data.document_loader import PDFLoader, MarkdownLoader
 from src.data.rag_manager import RAGSystem
 from src.llm.model_manager import LocalLLM
 from src.verification.why3_runner import Why3Verifier
 from src.agent.prover_agent import AgenticProver
 from src.evaluation.evaluator import Evaluator
+from src.config import RAG_MODE
 
 def main():
     logger = logging.getLogger("Main")
-    logger.info("Booting Learning-Infused Formal Reasoning System...")
+    logger.info(f"Booting Formal Reasoning System [MODE: {RAG_MODE.upper()}]...")
 
     # 1. Initialize Components
-    loader = CourseLoader()
+    if RAG_MODE == "md":
+        loader = MarkdownLoader()
+    else:
+        loader = PDFLoader()
+        
     rag = RAGSystem()
     llm = LocalLLM()
     verifier = Why3Verifier()

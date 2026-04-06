@@ -10,11 +10,16 @@ from pathlib import Path
 # Base directory (absolute path to the root of the project)
 BASE_DIR = Path(__file__).resolve().parent.parent
 COURSES_DIR = BASE_DIR / "les_cours"
+COURSES_MD_DIR = BASE_DIR / "les_md_cours"
 TEMP_WHY3_FILE = BASE_DIR / "test_temp.mlw"
 LOGS_DIR = BASE_DIR / "logs"
 
+# RAG Mode: "pdf" or "md"
+RAG_MODE = "md"
+
 # Ensure crucial directories exist
 COURSES_DIR.mkdir(exist_ok=True)
+COURSES_MD_DIR.mkdir(exist_ok=True)
 LOGS_DIR.mkdir(exist_ok=True)
 
 # LLM Configuration
