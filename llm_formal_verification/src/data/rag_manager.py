@@ -51,8 +51,24 @@ class RAGSystem:
         self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": RETRIEVER_K})
         logger.info("RAG Database Ready.")
 
+    def _sanitize_context(self, text: str) -> str:
+        """Translates Unicode math symbols in notes to Why3-legal ASCII."""
+        replacements = {
+            "∧": "&&",
+            "∨": "||",
+            "¬": "not",
+            "⇒": "->",
+            "⇔": "<->",
+            "∀": "forall",
+            "∃": "exists",
+            "≠": "<>"
+        }
+        for char, target in replacements.items():
+            text = text.replace(char, target)
+        return text
+
     def retrieve_context(self, query: str) -> str:
-        """Retrieves top-K relevant chunks for a given query."""
+        """Retrieves top-K relevant chunks for a given query and sanitizes them."""
         if not self.retriever:
             return ""
         
@@ -65,7 +81,10 @@ class RAGSystem:
             for i, d in enumerate(retrieved_docs):
                 source = d.metadata.get('source', 'Unknown Source')
                 page = d.metadata.get('page', 'Unknown Page')
-                context_blocks.append(f"--- SOURCE: {source} (Page {page}) ---\n{d.page_content}")
+                
+                # SANITIZE: Mathematical symbols in notes confuse the 2B model
+                clean_content = self._sanitize_context(d.page_content)
+                context_blocks.append(f"--- SOURCE: {source} (Page {page}) ---\n{clean_content}")
                 
             return "\n\n".join(context_blocks)
         except Exception as e:
