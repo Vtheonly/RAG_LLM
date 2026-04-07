@@ -18,30 +18,43 @@ class AgenticProver:
         self.rag = rag
         self.verifier = verifier
 
-        # ENGLISH SYSTEM PROMPT + CHEAT SHEET
+        # ENGLISH SYSTEM PROMPT + CHEAT SHEET v2.0
         # Small models reason 10x better in English. We force it to think in English, but output MLW.
         self.system_prompt = (
             "You are an expert formal verification engineer specializing in Why3 and MLW syntax.\n"
             "You will be provided with context from a university course on formal methods (in French).\n"
             "Your task is to write valid, mathematically sound Why3 code to solve the user's prompt.\n\n"
-            "### WHY3 SYNTAX CHEAT SHEET ###\n"
+            "### WHY3 BASIC SYNTAX ###\n"
             "module Example\n"
             "  use int.Int\n"
-            "  use ref.Ref\n\n"
-            "  let function_name (x: int) : int\n"
+            "  let f (x: int) : int\n"
             "    requires { x >= 0 }\n"
             "    ensures  { result = x + 1 }\n"
-            "  =\n"
-            "    x + 1\n"
+            "  = x + 1\n"
+            "end\n\n"
+            "### WHY3 LOOP & REF SYNTAX (IMPORTANT) ###\n"
+            "To use mutable state (while loops), you MUST use `ref` and `! / :=`:\n"
+            "module LoopExample\n"
+            "  use int.Int\n"
+            "  use ref.Ref\n"
+            "  let sum (n: int) : int =\n"
+            "    let i = ref 0 in\n"
+            "    let res = ref 0 in\n"
+            "    while (!i < n) do\n"
+            "      invariant { 0 <= !i <= n }\n"
+            "      variant { n - !i }\n"
+            "      i := !i + 1;\n"
+            "      res := !res + !i\n"
+            "    done;\n"
+            "    !res\n"
             "end\n\n"
             "### CRITICAL INSTRUCTIONS ###\n"
             "1. Output ONLY the code inside a ```why3 ... ``` block.\n"
-            "2. Do NOT write any conversational text, greetings, or explanations.\n"
-            "3. ALWAYS include 'module', 'requires', 'ensures', and if using loops, 'invariant' and 'variant'.\n"
-            "4. Module names MUST start with a Capital letter (e.g. `module MaxFunction`, not `module max`).\n"
-            "5. NEVER leave precondition brackets empty like `requires {}`. Use `requires { true }` instead.\n"
-            "6. MANDATORY ATTRIBUTION: You MUST include a comment at the top of your code citing the PDF source and page number from the provided context (e.g., `(* Derived from: Course01, Page 12 *)`).\n"
-            "7. GROUNDING: If you use a specific invariant or library from the context, mention it in a comment."
+            "2. NEVER use mathematical symbols (∧, ∨, ⇒); use ASCII ONLY (`&&`, `||`, `->`).\n"
+            "3. For mutable loop variables, ALWAYS use `ref`, `!var` (read), and `var := val` (write).\n"
+            "4. NEVER leave precondition brackets empty like `requires {}`. Use `requires { true }` instead.\n"
+            "5. MANDATORY ATTRIBUTION: You MUST include a comment at the top of your code citing the PDF/Markdown source (e.g., `(* Derived from: Course01, Page 12 *)`).\n"
+            "6. Modules names MUST be Capitalized (e.g., `module MaxFunc`)."
         )
 
     def _write_trace_log(self, test_name: str, instruction: str, context: str, attempts: list):
