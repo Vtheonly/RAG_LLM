@@ -15,12 +15,12 @@ class Why3Verifier:
 
     def __init__(self):
         # Prefer the binary from config, then look in PATH
-        self.why3_bin = WHY3_BINARY if Path(str(WHY3_BINARY)).is_file() else shutil.which("why3")
+        self.why3_bin = WHY3_BINARY if (WHY3_BINARY and Path(str(WHY3_BINARY)).is_file()) else shutil.which("why3")
         self._ensure_installation()
 
     def _ensure_installation(self):
         """Checks for Why3 and attempts auto-installation or provides platform-specific warnings."""
-        if self.why3_bin and Path(self.why3_bin).is_file():
+        if self.why3_bin and Path(str(self.why3_bin)).is_file():
             logger.info(f"Found Why3 binary at: {self.why3_bin}")
             # Ensure solvers are registered
             try:
@@ -34,13 +34,9 @@ class Why3Verifier:
         sys_info = platform.system().lower()
         
         if "linux" in sys_info:
-            logger.warning("Why3 not found. Attempting apt-get install (Ubuntu/Debian)...")
-            try:
-                subprocess.run(["sudo", "apt-get", "update"], capture_output=True)
-                subprocess.run(["sudo", "apt-get", "install", "-y", "why3", "alt-ergo"], capture_output=True)
-                self.why3_bin = shutil.which("why3") or "/usr/bin/why3"
-            except Exception as e:
-                logger.error(f"Linux auto-install failed: {e}")
+            logger.warning("Why3 not found in standard paths. Please ensure OPAM is initialized.")
+            # Note: We no longer auto-run 'apt-get install' here to avoid permission/config issues.
+            # Users should use the provided setup scripts or notebooks.
         
         elif "windows" in sys_info:
             logger.error("\n" + "="*60 +
@@ -53,8 +49,8 @@ class Why3Verifier:
                          "\n3. Run this Python script inside your WSL terminal." +
                          "\n" + "="*60)
         
-        if not self.why3_bin or not Path(self.why3_bin).is_file():
-            logger.error("Why3 verification will be disabled until the binary is found.")
+        if not self.why3_bin:
+            logger.error("Why3 binary NOT FOUND. Formal verification will be disabled.")
 
 
     def extract_code(self, raw_response: str) -> str:
@@ -89,12 +85,15 @@ class Why3Verifier:
         """
         clean_code = self.normalize_code(raw_code)
         
+        if not self.why3_bin:
+            return False, "", "[SYSTEM ERROR] Why3 binary not found. Verification skipped.", clean_code
+
         with open(TEMP_WHY3_FILE, "w", encoding="utf-8") as f:
             f.write(clean_code)
 
         try:
             res = subprocess.run(
-                [self.why3_bin, "prove", "-P", SMT_PROVER, TEMP_WHY3_FILE],
+                [str(self.why3_bin), "prove", "-P", SMT_PROVER, TEMP_WHY3_FILE],
                 capture_output=True, text=True, timeout=VERIFICATION_TIMEOUT
             )
             out = res.stdout or ""

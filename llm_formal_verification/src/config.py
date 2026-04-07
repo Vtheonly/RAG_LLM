@@ -46,7 +46,9 @@ def _find_why3():
     home = Path.home()
     candidates = [
         home / ".opam" / "default" / "bin" / "why3",
+        home / ".opam" / "4.14.1" / "bin" / "why3",
         home / ".opam" / "4.14.2" / "bin" / "why3",
+        home / ".opam" / "5.1.1" / "bin" / "why3",
         Path("/usr/local/bin/why3"),
         Path("/usr/bin/why3"),
     ]
@@ -55,8 +57,8 @@ def _find_why3():
         if c.is_file():
             return str(c)
             
-    # 3. Fallback for Windows users (placeholder if they have it in local bin)
-    return "why3"  # Default attempt
+    # 3. No binary found - return None to signal 'Not Installed'
+    return None
 
 WHY3_BINARY = _find_why3()
 SMT_PROVER = "alt-ergo"
